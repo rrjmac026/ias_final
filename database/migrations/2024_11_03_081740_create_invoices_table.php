@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('club_memberships', function (Blueprint $table) {
+        Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
-            $table->foreignId('club_id')->constrained('clubs')->onDelete('cascade');
-            $table->timestamp('joined_at')->useCurrent();
-            $table->string('role')->nullable();
+            $table->unsignedBigInteger('student_id'); // Remove unique constraint
+            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
+            $table->decimal('amount', 10, 2);
+            $table->boolean('status');
+            $table->text('description')->nullable();
             $table->timestamps();
         });
-        
     }
 
     /**
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('club_memberships');
+        Schema::dropIfExists('invoices');
     }
 };

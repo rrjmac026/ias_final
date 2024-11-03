@@ -20,6 +20,8 @@ class ClubResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
 
+    protected static ?string $navigationGroup = 'Clubs and Memberships';
+
     protected static ?string $navigationLabel = 'Clubs';
 
     protected static ?string $label = 'Club';

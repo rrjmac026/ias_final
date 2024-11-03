@@ -15,6 +15,7 @@ class ClubMembership extends Model
         'student_id',
         'club_id',
         'joined_at',
+        'role'
     ];
 
     public function student()

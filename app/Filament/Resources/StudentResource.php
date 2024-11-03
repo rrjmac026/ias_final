@@ -30,6 +30,8 @@ class StudentResource extends Resource
                     ->email(),
                 Forms\Components\TextInput::make('student_id')
                     ->required(),
+                Forms\Components\TextInput::make('year_level')
+                    ->required(),
                 Forms\Components\TextInput::make('phone'),
             ]);
     }
@@ -40,6 +42,7 @@ class StudentResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('email'),
+                Tables\Columns\TextColumn::make('year_level'),
                 Tables\Columns\TextColumn::make('student_id'),
             ])
             ->filters([]);
