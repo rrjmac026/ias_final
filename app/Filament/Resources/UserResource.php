@@ -9,63 +9,73 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Spatie\Permission\Models\Role; // Make sure to import the Role model
+use Spatie\Permission\Models\Role;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Hash;
-
+use Carbon\Carbon;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
-
+    
     protected static ?string $navigationLabel = 'Users';
-
     protected static ?string $navigationGroup = 'User Management';
-
     protected static ?string $navigationIcon = 'heroicon-o-user';
 
     public static function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required(),
-                Forms\Components\TextInput::make('email')
-                    ->required()
-                    ->email(),
-                Forms\Components\TextInput::make('password')
-                    ->required()
-                    ->password()
-                    ->minLength(8) // Minimum password length
-                    ->dehydrated(fn ($state): bool => filled($state)), // Only save if not empty
-                Forms\Components\Select::make('roles')
-                    ->relationship('roles', 'name')
-                    ->multiple()
-                    ->required(),
-                
-            ]);
-    }
-    public static function afterCreate($record): void
-    {
-        $record->password = Hash::make($record->password); // Hash the password before saving
-        $record->save();
-    }
+        {
+            return $form
+                ->schema([
+                    Forms\Components\TextInput::make('name')
+                        ->required()
+                        ->unique(User::class, 'name', ignoreRecord: true) // Ensures name is unique, ignoring current record on edit
+                        ->label('Name'),
 
-    public static function table(Tables\Table $table): Tables\Table
+                    Forms\Components\TextInput::make('email')
+                        ->required()
+                        ->email()
+                        ->unique(User::class, 'email', ignoreRecord: true) // Ensures email is unique, ignoring current record on edit
+                        ->label('Email'),
+
+                    Forms\Components\TextInput::make('password')
+                        ->password()
+                        ->minLength(8)
+                        ->dehydrated(fn ($state): bool => filled($state))
+                        ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
+
+                    Forms\Components\Select::make('roles')
+                        ->relationship('roles', 'name')
+                        ->multiple()
+                        ->required(),
+
+                    // Add the expiry date as a default field
+                    Forms\Components\DatePicker::make('account_expires_at')
+                        ->label('Account Expiry Date')
+                        ->default(fn () => Carbon::now()->addDays(150)) // Default to 150 days from now
+                        ->minDate(Carbon::now()), // Ensure it can't be set in the past
+                ]);
+        }
+
+
+    public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 TextColumn::make('name')->label('Name'),
                 TextColumn::make('email')->label('Email'),
-                TextColumn::make('roles.name')->label('Role')->sortable(),
-            ])
-            ->filters([
-                // You can add filters to display specific roles if needed
+                TextColumn::make('roles.name')->label('Role'),
+                TextColumn::make('account_expires_at') // Display expiry date in the table
+                    ->label('Account Expiry Date')
+                    ->date() // Format as a date
+                    ->sortable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 

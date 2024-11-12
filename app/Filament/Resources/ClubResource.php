@@ -24,6 +24,8 @@ class ClubResource extends Resource
 
     protected static ?string $navigationLabel = 'Clubs';
 
+    
+
     protected static ?string $label = 'Club';
     protected static ?string $pluralLabel = 'Clubs';
 
@@ -50,6 +52,15 @@ class ClubResource extends Resource
                     ->label('Club Name'),
                 TextColumn::make('description')
                     ->label('Description'),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ])
             ->filters([]);
     }

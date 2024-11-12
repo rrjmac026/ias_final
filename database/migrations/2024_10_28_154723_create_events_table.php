@@ -16,10 +16,11 @@ class CreateEventsTable extends Migration
         Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->foreignId('club_id')->constrained('clubs')->onDelete('cascade');
-            $table->string('name');         // Event name
-            $table->text('description')->nullable();  // Event description
-            $table->date('event_date');     // Event date
-            $table->string('location');     // Event location
+            $table->text('name');
+            $table->text('description');
+            $table->date('event_date');
+            $table->text('location');
+                 // Event date     // Event location
             $table->timestamps();
         });
     }

@@ -3,25 +3,24 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Student;
+use App\Models\Event;
+use App\Models\ClubMembership;
 use Filament\Widgets\ChartWidget;
-
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
 use Illuminate\Support\Carbon;
 use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
-use Illuminate\Support\Facades\Log;
 
 class LineChart extends ChartWidget
-
 {
-    protected static ?string $heading = 'Students Chart';
+    protected static ?string $heading = 'Chart 2';
 
     use HasWidgetShield;
 
     protected function getData(): array
     {
-
-        $data = Trend::model(Student::class)
+        // Get student data per month
+        $studentData = Trend::model(Student::class)
             ->between(
                 start: now()->startOfYear(),
                 end: now()->endOfYear(),
@@ -29,17 +28,49 @@ class LineChart extends ChartWidget
             ->perMonth()
             ->count();
 
-            
+        // Get event data per month
+        $eventData = Trend::model(Event::class)
+            ->between(
+                start: now()->startOfYear(),
+                end: now()->endOfYear(),
+            )
+            ->perMonth()
+            ->count();
+
+        // Get club membership data per month
+        $clubMembershipData = Trend::model(ClubMembership::class)
+            ->between(
+                start: now()->startOfYear(),
+                end: now()->endOfYear(),
+            )
+            ->perMonth()
+            ->count();
+
         return [
             'datasets' => [
                 [
-                    'label' => 'Students Added',
-                    'data' => $data->map(fn (TrendValue $value) => $value->aggregate)->toArray(),
-                    'backgroundColor' => '#36A2EB',
-                    'borderColor' => '#9BD0F5',
+                    'label' => 'Students',
+                    'data' => $studentData->map(fn (TrendValue $value) => $value->aggregate)->toArray(),
+                    'backgroundColor' => '#4CAF50',  // Green color
+                    'borderColor' => '#81C784',  // Lighter green
+                    'fill' => false,
+                ],
+                [
+                    'label' => 'Events',
+                    'data' => $eventData->map(fn (TrendValue $value) => $value->aggregate)->toArray(),
+                    'backgroundColor' => '#F59E0B',  // Filament warning color
+                    'borderColor' => '#F59E0B',  // Same warning color for border
+                    'fill' => false,
+                ],
+                [
+                    'label' => 'Club Memberships',
+                    'data' => $clubMembershipData->map(fn (TrendValue $value) => $value->aggregate)->toArray(),
+                    'backgroundColor' => '#2196F3',  // Blue color
+                    'borderColor' => '#64B5F6',  // Lighter blue
+                    'fill' => false,
                 ],
             ],
-            'labels' => $data->map(fn (TrendValue $value) => Carbon::parse($value->date)->format('M'))->toArray(),
+            'labels' => $studentData->map(fn (TrendValue $value) => Carbon::parse($value->date)->format('M'))->toArray(),
         ];
     }
 
@@ -48,4 +79,3 @@ class LineChart extends ChartWidget
         return 'line';
     }
 }
-

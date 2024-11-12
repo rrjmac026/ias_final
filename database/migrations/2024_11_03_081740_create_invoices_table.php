@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('student_id'); // Remove unique constraint
             $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
-            $table->decimal('amount', 10, 2);
-            $table->boolean('status');
-            $table->text('description')->nullable();
+            $table->text('amount');
+            $table->text('status');
+            $table->text('description');
+
             $table->timestamps();
         });
     }

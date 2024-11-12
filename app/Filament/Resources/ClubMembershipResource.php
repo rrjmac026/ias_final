@@ -22,6 +22,8 @@ class ClubMembershipResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'Clubs and Memberships';
     protected static ?string $navigationLabel = 'Club Memberships';
+
+    
     
 
     protected static ?string $label = 'Club Membership';
@@ -53,14 +55,25 @@ class ClubMembershipResource extends Resource
             ->columns([
                 TextColumn::make('club.name')
                     ->sortable()
+                    ->searchable()
                     ->label('Club'),
                 TextColumn::make('student.name')
                     ->sortable()
+                    ->searchable()
                     ->label('Student'),
                 TextColumn::make('joined_at')
                     ->label('Joined At'),
                 TextColumn::make('role')
                     ->label('Role'),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ])
             ->filters([]);
     }

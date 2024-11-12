@@ -47,7 +47,9 @@ class InvoiceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('student.name') // Ensure to access the student's name
-                    ->label('Student'),
+                ->searchable()
+                ->label('Student'),
+
                 Tables\Columns\TextColumn::make('amount')
                     ->label('Amount'),
                 Tables\Columns\BooleanColumn::make('status')
@@ -58,9 +60,10 @@ class InvoiceResource extends Resource
                     ->label('Description'),
             ])
             ->filters([/* Define any filters if necessary */])
-            ->actions([
-                Tables\Actions\EditAction::make(),
-            ])
+                ->actions([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

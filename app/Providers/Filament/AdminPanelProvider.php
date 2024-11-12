@@ -17,6 +17,8 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use CharrafiMed\GlobalSearchModal\GlobalSearchModalPlugin;
+use Yebor974\Filament\RenewPassword\RenewPasswordPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -36,6 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
+            // ->databaseNotifications()
             ->resources([
                 config('filament-logger.activity_resource')
             ])
@@ -43,6 +46,9 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
                 \Hasnayeen\Themes\ThemesPlugin::make(),
+                GlobalSearchModalPlugin::make(),
+                RenewPasswordPlugin::make()
+                    ->passwordExpiresIn(days: 150),
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([

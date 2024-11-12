@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
             $table->foreignId('club_id')->constrained('clubs')->onDelete('cascade');
             $table->timestamp('joined_at')->useCurrent();
-            $table->string('role')->nullable();
+            $table->text('role')->nullable();
             $table->timestamps();
         });
         

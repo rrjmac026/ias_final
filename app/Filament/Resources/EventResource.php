@@ -23,6 +23,8 @@ class EventResource extends Resource
 
     protected static ?string $navigationLabel = 'Events';
 
+    
+
     protected static ?string $label = 'Event';
     protected static ?string $pluralLabel = 'Events';
 
@@ -64,8 +66,18 @@ class EventResource extends Resource
                 ->label('Location'),
             TextColumn::make('event_date')
                 ->label('Event Date'),
+                
         ])
-            ->filters([]);
+        ->actions([
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make(),
+        ])
+        ->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]),
+        ])
+        ->filters([]);
     }
 
     public static function getRelations(): array
